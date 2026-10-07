@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Passo dopo passo">
+<meta name="theme-color" content="#27285C">
+<title>Passo dopo passo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F0F8;--card:#FFFFFF;--ink:#24203D;--mute:#6C6888;--line:#E0DCEE;--night:#27285C;--c1:#4B4FA3;--c2:#1F7F6C;--c3:#B0731A;--paper:#FBF9F4;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14122A;--card:#201D3A;--ink:#EFECFA;--mute:#A6A1C4;--line:#37335A;--night:#2A2A6E;--c1:#9296F2;--c2:#55C7B1;--c3:#E8B04A;--paper:#1B1833}}
+:root[data-theme="dark"]{--bg:#14122A;--card:#201D3A;--ink:#EFECFA;--mute:#A6A1C4;--line:#37335A;--night:#2A2A6E;--c1:#9296F2;--c2:#55C7B1;--c3:#E8B04A;--paper:#1B1833}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;padding-top:env(safe-area-inset-top,0px)}
+h1,h2,.prompt,.txt,.clock{font-family:Fraunces,Georgia,serif}
+main{max-width:540px;margin:0 auto;padding:18px 16px 110px}
+header{margin-bottom:18px}
+h1{font-size:32px;margin:0;line-height:1.1}
+.date{color:var(--mute);font-size:14px;text-transform:capitalize}
+.tab{display:none}.tab.on{display:block}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;max-width:170px;font:inherit;font-size:14px;font-weight:600;color:var(--mute);background:none;border:0;border-radius:12px;padding:10px 6px;min-height:48px;cursor:pointer}
+nav button[aria-selected=true]{background:var(--night);color:#fff}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+h2{font-size:21px;margin:0 0 6px}
+.hint{color:var(--mute);font-size:14px;margin:6px 0 0}
+label.row{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);cursor:pointer;min-height:48px}
+h2+label.row{border-top:0}
+input[type=checkbox]{width:24px;height:24px;flex:none}
+.h0 input{accent-color:var(--c1)}.h1 input{accent-color:var(--c2)}.h2 input{accent-color:var(--c3)}
+input[type=text],textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+.fld{margin-top:12px}.fld span{display:block;font-size:14px;color:var(--mute);margin-bottom:4px}
+textarea{resize:vertical}
+:focus-visible{outline:3px solid var(--c1);outline-offset:2px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:12px 24px;min-height:48px;cursor:pointer;background:var(--night);color:#fff}
+.btn.ln{background:transparent;color:inherit;border:1px solid var(--line)}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.goal{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:22px;line-height:1.3;margin:0 0 4px}
+/* respiro */
+.rest{background:var(--night);color:#fff;border:0;text-align:center}
+.rest h2{color:#fff}.rest .hint{color:#CBCDF6}
+.orb{width:130px;height:130px;border-radius:50%;margin:18px auto;border:2px solid rgba(255,255,255,.55);background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.28),rgba(255,255,255,.06));display:grid;place-items:center;transition:transform 4s ease-in-out}
+.orb.in{transform:scale(1.25)}.orb.out{transform:scale(.82);transition-duration:6s}
+.clock{font-size:32px;font-weight:700}
+.rest .btn{background:#fff;color:#27285C}.rest .btn.ln{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+/* settimana */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:13px;color:var(--mute)}
+.dots{display:flex;flex-direction:column;gap:6px;align-items:center;margin-top:8px}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--line)}
+.dot.d0.on{background:var(--c1);border-color:var(--c1)}.dot.d1.on{background:var(--c2);border-color:var(--c2)}.dot.d2.on{background:var(--c3);border-color:var(--c3)}
+.today{color:var(--ink);font-weight:700}
+.legend{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--mute);margin-top:14px}
+/* diario */
+.page{background:var(--paper);border-radius:6px 16px 16px 6px;border-left:5px solid var(--c1)}
+.prompt{font-style:italic;font-size:20px;line-height:1.35;margin:4px 0 12px}
+.entry .when{color:var(--mute);font-size:13px;text-transform:capitalize}
+.entry .txt{white-space:pre-wrap;margin:6px 0 0;font-size:17px;line-height:1.5}
+.err{color:#B3261E;font-size:14px;margin:8px 0 0}
+.foot{color:var(--mute);font-size:13px;text-align:center;margin-top:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.chip{font:inherit;font-size:14px;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:9px 14px;min-height:44px;cursor:pointer}
+.chip.on{background:#fff;color:#27285C}
+.cue{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:18px;line-height:1.4;margin:0 0 16px;min-height:50px;color:#E6E7FF}
+.mus{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:16px;font-size:14px;color:#CBCDF6;cursor:pointer;min-height:44px}
+.mus input{accent-color:#fff}
+.vrow{display:flex;gap:8px;justify-content:center;margin-top:4px}.vrow select{font:inherit;font-size:14px;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:8px 10px;max-width:70%;min-height:44px}.vrow option{color:#24203D}
+.own{margin-top:14px;text-align:left;font-size:14px;color:#E6E7FF}
+.own summary{cursor:pointer;font-weight:600;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center}
+.up{display:block;margin-top:12px}.up input{display:block;margin-top:6px;max-width:100%;color:#fff}
+.own .chip{margin-top:8px}
+.del{font:inherit;font-size:13px;color:var(--mute);background:none;border:0;padding:8px 0 0;cursor:pointer;text-decoration:underline}
+.note{font-size:13px;color:#CBCDF6;margin:8px 0 0}
+#txtBox{margin-top:10px;padding:12px;background:rgba(255,255,255,.1);border-radius:10px;white-space:pre-wrap;line-height:1.5}
+@media (prefers-reduced-motion:reduce){.orb{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="date" id="oggi"></div><h1>Passo dopo passo</h1></header>
+
+<div class="tab on" id="t-oggi">
+  <section id="setup" hidden>
+    <h2>Il tuo obiettivo</h2>
+    <p class="hint">Scegli una cosa su cui vuoi lavorare e fino a tre piccoli gesti da fare ogni giorno. Piccoli e concreti: puoi cambiarli quando vuoi.</p>
+    <label class="fld"><span>Il mio obiettivo</span><input type="text" id="goalIn" maxlength="80" placeholder="es. Ritrovare energia"></label>
+    <label class="fld"><span>Gesto 1</span><input type="text" id="g0" maxlength="60" placeholder="es. Camminare 15 minuti"></label>
+    <label class="fld"><span>Gesto 2 (facoltativo)</span><input type="text" id="g1" maxlength="60"></label>
+    <label class="fld"><span>Gesto 3 (facoltativo)</span><input type="text" id="g2" maxlength="60"></label>
+    <p class="err" id="setErr"></p>
+    <div class="acts"><button class="btn" id="setSave">Salva</button></div>
+  </section>
+
+  <section id="today" hidden>
+    <p class="goal" id="goalTxt"></p>
+    <p class="hint" style="margin:0 0 6px">I gesti di oggi</p>
+    <div id="habits"></div>
+    <div class="acts"><button class="btn ln" id="edit">Modifica obiettivo</button></div>
+  </section>
+
+  <section class="rest" aria-live="polite">
+    <h2>5 minuti di respirazione</h2>
+    <p class="hint">Facoltativo. Scegli come usarli, premi Inizia e chiudi gli occhi: ti guida la voce.</p>
+    <div class="chips" role="radiogroup" aria-label="Come vuoi usare questi minuti">
+      <button class="chip on" role="radio" aria-checked="true" data-m="0">Ritrovare centratura</button>
+      <button class="chip" role="radio" aria-checked="false" data-m="1">Lasciare andare la tensione</button>
+      <button class="chip" role="radio" aria-checked="false" data-m="2">Fare spazio</button>
+    </div>
+    <div class="orb" id="orb"><span class="clock" id="clock">5:00</span></div>
+    <p id="guide" style="margin:0 0 6px;min-height:24px;font-weight:600">Pronta quando vuoi.</p>
+    <p id="cue" class="cue">Siediti o sdraiati comoda. Premi Inizia, poi chiudi gli occhi.</p>
+    <button class="btn" id="start">Inizia</button><button class="btn ln" id="stop" hidden>Fermati</button>
+    <label class="mus"><input type="checkbox" id="voice" checked> Voce guida</label>
+    <div id="vrow" class="vrow" hidden><select id="vsel" aria-label="Scegli la voce" hidden></select><button class="chip" id="vtest" type="button">Prova</button></div>
+    <p class="note" id="wakeNote" hidden>Il tuo telefono potrebbe spegnere lo schermo: se succede, tienilo acceso dalle impostazioni per questi 5 minuti.</p>
+    <label class="mus" style="margin-top:0"><input type="checkbox" id="music" checked> Musica di sottofondo</label>
+    <details class="own"><summary>Usa la mia voce e i miei suoni</summary>
+      <p class="hint" style="text-align:left">Per l’intenzione scelta: <b id="ownMode"></b></p>
+      <label class="up">La mia voce (registrazione)<input type="file" accept="audio/*" id="upVoice"></label>
+      <span class="hint" id="stVoice"></span> <button class="chip" id="rmVoice" type="button" hidden>Rimuovi</button>
+      <label class="up">Suono di sottofondo (musica o natura)<input type="file" accept="audio/*" id="upBg"></label>
+      <span class="hint" id="stBg"></span> <button class="chip" id="rmBg" type="button" hidden>Rimuovi</button>
+      <div><button class="chip" id="showText" type="button">Testo da leggere per registrarti</button></div>
+      <div id="txtBox" hidden></div>
+    </details>
+  </section>
+</div>
+
+<div class="tab" id="t-diario">
+  <section class="page">
+    <p class="hint" style="margin:0">Una domanda per oggi</p>
+    <p class="prompt" id="prompt"></p>
+    <textarea id="txt" rows="7" placeholder="Scrivi come viene, senza rileggere."></textarea>
+    <p class="err" id="newErr"></p>
+    <div class="acts"><button class="btn" id="saveBtn">Salva la pagina</button></div>
+  </section>
+  <div id="entries"></div>
+</div>
+
+<div class="tab" id="t-sett">
+  <section><h2>Ultimi 7 giorni</h2>
+    <div class="week" id="week"></div>
+    <div class="legend" id="legend"></div>
+    <p class="hint" style="text-align:center">Un solo pallino pieno è già un giorno che conta.</p></section>
+  <section><h2>Pagine scritte</h2><p class="hint" id="count" style="margin:0"></p></section>
+  <section><h2>Le mie pagine al sicuro</h2><p class="hint" style="margin:0 0 4px">I dati vivono solo in questo telefono. Ogni tanto copia i tuoi dati e incollali in una nota: se cambi telefono o cancelli i dati del browser, li ricarichi da qui.</p>
+    <div class="acts"><button class="btn" id="exp">Copia i miei dati</button><button class="btn ln" id="impOpen">Ricarica una copia</button></div>
+    <p class="hint" id="bkMsg"></p>
+    <div id="bkBox" hidden><textarea id="bkTxt" rows="5" class="fld" placeholder="Incolla qui la copia salvata"></textarea>
+    <div class="acts"><button class="btn" id="impGo" hidden>Sostituisci i dati di questo telefono</button></div></div></section>
+  <p class="foot">I tuoi dati restano su questo telefono e non li vede nessuno. È uno strumento per fare chiarezza su di te, non sostituisce un professionista.</p>
+</div>
+</main>
+
+<nav role="tablist">
+  <button role="tab" aria-selected="true" data-t="oggi">Oggi</button>
+  <button role="tab" aria-selected="false" data-t="diario">Diario</button>
+  <button role="tab" aria-selected="false" data-t="sett">Settimana</button>
+</nav>
+
+<script>
+const K='passo-dopo-passo-v1';
+let S={goal:'',habits:['','',''],days:{},diary:[]};
+try{const r=localStorage.getItem(K);if(r)S=Object.assign(S,JSON.parse(r));}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S));}catch(e){}};
+const $=id=>document.getElementById(id);
+const key=d=>d.toLocaleDateString('sv-SE');
+const tk=key(new Date());
+Object.keys(S.days).forEach(k=>{const v=S.days[k];if(Array.isArray(v)){const o={};v.forEach((x,i)=>{const t=(S.habits[i]||'').trim();if(x&&t)o[t]=true;});S.days[k]=o;}});
+const day=k=>S.days[k]||(S.days[k]={});
+const act=()=>S.habits.map((h,i)=>({h,i})).filter(x=>x.h.trim());
+$('oggi').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'});
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id==='t-'+b.dataset.t));
+  window.scrollTo(0,0);});
+
+/* obiettivo e gesti */
+function showToday(){
+  const has=!!(S.goal&&act().length);
+  $('setup').hidden=has;$('today').hidden=!has;
+  if(!has){$('goalIn').value=S.goal;[0,1,2].forEach(i=>$('g'+i).value=S.habits[i]);return;}
+  $('goalTxt').textContent=S.goal;
+  const box=$('habits');box.innerHTML='';const d=day(tk);
+  act().forEach(({h,i})=>{const l=document.createElement('label');l.className='row h'+i;
+    const c=document.createElement('input');c.type='checkbox';c.checked=!!d[h];
+    c.onchange=()=>{const o=day(tk);if(c.checked)o[h]=true;else delete o[h];save();draw();};
+    const s=document.createElement('span');s.textContent=h;l.append(c,s);box.appendChild(l);});
+}
+$('setSave').onclick=()=>{
+  const g=$('goalIn').value.trim(),h=[0,1,2].map(i=>$('g'+i).value.trim());
+  if(!g||!h.some(Boolean)){$('setErr').textContent='Scrivi l\u2019obiettivo e almeno un gesto.';return;}
+  $('setErr').textContent='';S.goal=g;S.habits=h.map(x=>x.trim());save();showToday();draw();};
+$('edit').onclick=()=>{$('goalIn').value=S.goal;[0,1,2].forEach(i=>$('g'+i).value=S.habits[i]);$('setup').hidden=false;$('today').hidden=true;};
+
+/* settimana */
+function draw(){
+  const w=$('week');w.innerHTML='';const a=act();
+  for(let i=6;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);const d=S.days[key(dt)]||{};
+    const c=document.createElement('div');
+    c.innerHTML=`<div class="${i?'':'today'}">${dt.toLocaleDateString('it-IT',{weekday:'short'}).slice(0,3)}</div><div class="dots">${a.map(x=>`<span class="dot d${x.i} ${d[x.h]?'on':''}"></span>`).join('')}</div>`;w.appendChild(c);}
+  $('legend').innerHTML='';a.forEach(x=>{const p=document.createElement('span');const b=document.createElement('b');b.style.color=`var(--c${x.i+1})`;b.textContent='● ';p.append(b,document.createTextNode(x.h));$('legend').appendChild(p);});
+  $('count').textContent=S.diary.length?`${S.diary.length} ${S.diary.length===1?'pagina':'pagine'} nel diario.`:'Ancora nessuna pagina: la prima è nella scheda Diario.';}
+
+/* respirazione */
+const CUES=[
+ ['Appoggia i piedi a terra e senti il peso del corpo sul sostegno che hai sotto.','Porta l\u2019attenzione dove senti il respiro con più chiarezza: naso, petto o pancia.','Se la mente corre via, va bene. Torna al respiro, con gentilezza.','Immagina una linea che scende dalla testa ai piedi. Resta lì, al centro.','Chiediti: di cosa ho bisogno adesso? Non serve rispondere, basta ascoltare.'],
+ ['Rilassa la mandibola e lascia cadere le spalle lontano dalle orecchie.','Ammorbidisci la fronte e le mani, come se le appoggiassi giù.','A ogni espirazione, lascia andare un po\u2019 di peso.','Nota dove il corpo è ancora teso e respiraci dentro, senza cambiare nulla.','Concediti di essere qui, così come sei.'],
+ ['Nota cosa c\u2019è in questo momento: pensieri, sensazioni, rumori, senza sceglierli.','Immagina ogni pensiero come una nuvola: arriva e passa.','Lascia un po\u2019 di spazio fra te e ciò che senti.','Respira come se il respiro creasse un po\u2019 più di spazio dentro.','Prima di finire, scegli una parola gentile da portare con te.']];
+let mode=0,timer=null,end=0,au=null;
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+  if(timer)return;mode=+c.dataset.m;refreshOwn();
+  document.querySelectorAll('.chip').forEach(x=>{x.classList.toggle('on',x===c);x.setAttribute('aria-checked',x===c);});});
+const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+
+function revNode(ctx){const len=ctx.sampleRate*3,b=ctx.createBuffer(2,len,ctx.sampleRate);
+  for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);}
+  const cv=ctx.createConvolver();cv.buffer=b;return cv;}
+function noiseSrc(ctx,brown){const len=ctx.sampleRate*4,buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);let l=0,pk=.0001;
+  for(let i=0;i<len;i++){const w=Math.random()*2-1;if(brown){l=(l+.02*w)/1.02;d[i]=l;}else d[i]=w;pk=Math.max(pk,Math.abs(d[i]));}
+  for(let i=0;i<len;i++)d[i]/=pk;
+  const s=ctx.createBufferSource();s.buffer=buf;s.loop=true;return s;}
+function lfo(ctx,hz,depth,target){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=hz;g.gain.value=depth;o.connect(g);g.connect(target);o.start();return o;}
+function tone(ctx,dest,hz,peak,dur){const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime;o.type='sine';o.frequency.value=hz;
+  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(peak,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.1);}
+function bowl(ctx,dest,f0){[[1,.35,10],[2.76,.17,7],[5.4,.08,4.5],[8.93,.03,3]].forEach(x=>tone(ctx,dest,f0*x[0],x[1],x[2]));}
+function chime(ctx,dest){const n=[523.25,587.33,659.25,783.99,880];tone(ctx,dest,n[Math.floor(Math.random()*n.length)],.09,6);}
+let mus=null;
+function musicOn(md){try{if(!mus){mus=document.createElement('audio');mus.setAttribute('playsinline','');mus.preload='auto';mus.loop=false;}
+    mus.src='musica-'+md+'.mp3';mus.volume=1;const p=mus.play();if(p)p.catch(()=>{});au={el:mus};}catch(x){au=null;}}
+function musicOff(){if(!au)return;const el=au.el;au=null;let v=1;
+  const f=setInterval(()=>{v-=.1;try{el.volume=Math.max(0,v);}catch(x){}if(v<=0){clearInterval(f);try{el.pause();}catch(x){}}},150);}
+
+const CLIP={};
+const NAT='__nat';
+try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(e){}
+let VC=null,VSRC=null;const VBUF={};
+const SIL='data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAAFgAACbEAHR0dHSgoKCgoMzMzMz09PT09SEhISFNTU1NTXl5eXmlpaWlpc3Nzc35+fn5+iYmJiZSUlJSUnp6enp6pqamptLS0tLS/v7+/ysrKysrU1NTU39/f39/q6urq9fX19fX/////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQELwAAAAAAAAmxyOFTSgAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80DEpAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsSjAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80DEpAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsSjAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80DEpAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsSjAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';let unm=null;
+function unmute(){try{if(!unm){unm=document.createElement('audio');unm.setAttribute('playsinline','');unm.setAttribute('x-webkit-airplay','deny');unm.preload='auto';unm.loop=true;unm.src=SIL;}
+  const p=unm.play();if(p)p.catch(()=>{});}catch(e){}}
+function vctx(){unmute();
+  if(!VC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;VC=new C();
+    try{const b=VC.createBuffer(1,1,22050),s=VC.createBufferSource();s.buffer=b;s.connect(VC.destination);s.start(0);}catch(e){}}
+  try{if(VC.state!=='running')VC.resume();}catch(e){}return VC;}
+function b64buf(u){const s=atob(u.split(',')[1]),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a.buffer;}
+function clipBuf(k){if(VBUF[k])return Promise.resolve(VBUF[k]);const ctx=vctx();
+  return new Promise((res,rej)=>ctx.decodeAudioData(b64buf(CLIP[k]),b=>{VBUF[k]=b;res(b);},rej));}
+function stopClip(){try{VSRC&&VSRC.stop();}catch(e){}VSRC=null;}
+async function playClip(k){const ctx=vctx();if(!ctx)return;try{const b=await clipBuf(k);stopClip();
+  const s=ctx.createBufferSource(),g=ctx.createGain();g.gain.value=1;s.buffer=b;s.connect(g);g.connect(ctx.destination);s.start();VSRC=s;}catch(e){}}
+let voices=[];
+function loadVoices(){
+  try{const all=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith('it'));
+    const sc=v=>/^google italiano/i.test(v.name)?0:(/premium|enhanced|avanzat|migliorat|natural/i.test(v.name)?1:2);
+    all.sort((a,b)=>sc(a)-sc(b));voices=all;
+    const sel=$('vsel');sel.innerHTML='';all.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=v.name;sel.appendChild(o);});
+    if(all[0])sel.value=all[0].name;$('vrow').hidden=!all.length;
+  }catch(e){$('vrow').hidden=true;}}
+function say(t,k){
+  if(!$('voice').checked||(OWN[mode]&&OWN[mode].v))return;
+  if(($('vsel').value||NAT)===NAT&&k&&CLIP[k]){playClip(k);return;}
+  try{if(!window.speechSynthesis)return;
+    const u=new SpeechSynthesisUtterance(t);u.lang='it-IT';u.rate=.8;u.pitch=1;
+    const v=voices.find(x=>x.name===$('vsel').value)||voices[0];if(v)u.voice=v;
+    speechSynthesis.speak(u);}catch(e){}}
+function hush(){stopClip();try{window.speechSynthesis&&speechSynthesis.cancel();}catch(e){}}
+try{speechSynthesis.onvoiceschanged=loadVoices;}catch(e){}loadVoices();
+$('vsel').onchange=()=>{try{localStorage.setItem('pdp-voice',$('vsel').value);}catch(e){}};
+$('vtest').onclick=()=>{vctx();hush();say('Ciao. Questa è la voce che ti accompagnerà, con calma.','test');};
+
+const DBP=new Promise((res,rej)=>{try{const r=indexedDB.open('pdp-audio',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}catch(e){rej(e);}});
+DBP.catch(()=>{});
+async function idbSet(k,v){const d=await DBP;return new Promise((res,rej)=>{const t=d.transaction('f','readwrite');t.objectStore('f').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+async function idbGet(k){const d=await DBP;return new Promise(res=>{const r=d.transaction('f').objectStore('f').get(k);r.onsuccess=()=>res(r.result||null);r.onerror=()=>res(null);});}
+async function idbDel(k){const d=await DBP;return new Promise(res=>{const t=d.transaction('f','readwrite');t.objectStore('f').delete(k);t.oncomplete=res;t.onerror=res;});}
+const OWN={};let OC=null,OS=[];
+const MN=['Ritrovare centratura','Lasciare andare la tensione','Fare spazio'];
+async function refreshOwn(){
+  const md=mode;$('ownMode').textContent=MN[md];
+  $('txtBox').textContent='Apertura: \u00abChiudi gli occhi, e lascia che il respiro trovi il suo ritmo.\u00bb\n\n'+CUES[md].map((x,i)=>(i+1)+'. '+x).join('\n\n')+'\n\nChiusura: \u00abQuando vuoi, riapri lentamente gli occhi.\u00bb\n\nLeggi con calma, con pause lunghe: circa un minuto di silenzio tra una frase e l\u2019altra.';
+  const o=OWN[md]=OWN[md]||{v:null,b:null};
+  for(const k of ['v','b']){let b=null;try{b=await idbGet(k+md);}catch(e){}
+    o[k]=b;if(md!==mode)continue;
+    $(k==='v'?'stVoice':'stBg').textContent=b?('Caricato: '+(b.name||'file audio')):(k==='v'?'Nessun file: uso la voce del telefono.':'Nessun file: uso il suono del telefono.');
+    $(k==='v'?'rmVoice':'rmBg').hidden=!b;}}
+[['v','upVoice','stVoice'],['b','upBg','stBg']].forEach(([k,id,st])=>$(id).onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  try{await idbSet(k+mode,f);}catch(x){$(st).textContent='Non riesco a salvare il file su questo telefono.';return;}
+  e.target.value='';refreshOwn();});
+[['v','rmVoice'],['b','rmBg']].forEach(([k,id])=>$(id).onclick=async()=>{try{await idbDel(k+mode);}catch(x){}refreshOwn();});
+$('showText').onclick=()=>{$('txtBox').hidden=!$('txtBox').hidden;};
+function playOwn(o){
+  const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  const ctx=OC=new C();try{ctx.resume();}catch(e){}
+  const go=async(blob,loop,gain,fs)=>{try{const buf=await ctx.decodeAudioData(await blob.arrayBuffer());if(OC!==ctx)return;
+    const s=ctx.createBufferSource(),g=ctx.createGain();s.buffer=buf;s.loop=loop;g.gain.setValueAtTime(fs?.0001:gain,ctx.currentTime);
+    if(fs)g.gain.linearRampToValueAtTime(gain,ctx.currentTime+fs);s.connect(g);g.connect(ctx.destination);s.start();OS.push({g});}catch(e){}};
+  if(o.b)go(o.b,true,.6,4);if(o.v)go(o.v,false,1,0);}
+function stopOwn(){const ctx=OC;OC=null;if(!ctx)return;
+  try{OS.forEach(x=>{x.g.gain.cancelScheduledValues(ctx.currentTime);x.g.gain.setValueAtTime(x.g.gain.value,ctx.currentTime);x.g.gain.linearRampToValueAtTime(0,ctx.currentTime+1.5);});}catch(e){}
+  OS=[];setTimeout(()=>{try{ctx.close();}catch(e){}},1800);}
+
+let lastCue=-1,wl=null;
+async function wakeOn(){try{if('wakeLock' in navigator){wl=await navigator.wakeLock.request('screen');$('wakeNote').hidden=true;}else $('wakeNote').hidden=false;}catch(e){$('wakeNote').hidden=false;}}
+function wakeOff(){try{unm&&unm.pause();}catch(e){}try{wl&&wl.release();}catch(e){}wl=null;}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&timer)wakeOn();});
+function reset(msg){clearInterval(timer);timer=null;wakeOff();musicOff();hush();stopOwn();lastCue=-1;$('orb').className='orb';$('clock').textContent='5:00';
+  $('start').hidden=false;$('stop').hidden=true;$('guide').textContent=msg||'Pronta quando vuoi.';}
+$('start').onclick=()=>{
+  end=Date.now()+300000;vctx();wakeOn();$('start').hidden=true;$('stop').hidden=false;lastCue=-1;
+  const ob=OWN[mode]||{};
+  if(ob.v||ob.b)playOwn(ob);
+  if(!ob.b&&$('music').checked)musicOn(mode);
+  const tick=()=>{const left=Math.max(0,Math.round((end-Date.now())/1000)),el=300-left;
+    $('clock').textContent=fmt(left);
+    if(el%10<4){$('orb').className='orb in';$('guide').textContent='Inspira piano';}
+    else{$('orb').className='orb out';$('guide').textContent='Espira lentamente';}
+    const ci=Math.min(4,Math.floor(el/60));
+    if(ci!==lastCue&&left>0){lastCue=ci;$('cue').textContent=CUES[mode][ci];
+      if(ci===0&&($('vsel').value||NAT)===NAT){say('','open');const m0=mode;setTimeout(()=>{if(timer&&lastCue===0&&mode===m0)say(CUES[m0][0],'c'+m0+'_0');},5500);}
+      else say((ci===0?'Chiudi gli occhi, e lascia che il respiro trovi il suo ritmo. ':'')+CUES[mode][ci],'c'+mode+'_'+ci);}
+    if(left<=0){const fin='Quando vuoi, riapri lentamente gli occhi.';reset('Fatto.');$('cue').textContent=fin;say(fin,'end');try{navigator.vibrate&&navigator.vibrate(200);}catch(e){}}};
+  tick();timer=setInterval(tick,500);};
+$('stop').onclick=()=>{reset('Va bene così.');$('cue').textContent='Riprovi quando vuoi.';};
+
+/* diario */
+const P=['Cosa mi ha dato energia oggi, e cosa me l\u2019ha tolta?','Qual è stato il mio piccolo passo di oggi, anche se minuscolo?','Cosa mi sono detta oggi che non direi a un\u2019amica?','Cosa ho evitato oggi, e cosa mi dice?','Quando oggi mi sono sentita più me stessa?','Di cosa ho bisogno adesso, davvero?','Cosa vorrei raccontare al gruppo, se mi sentissi libera di farlo?'];
+$('prompt').textContent=P[new Date().getDate()%P.length];
+$('saveBtn').onclick=()=>{const t=$('txt').value.trim();if(!t){$('newErr').textContent='Scrivi almeno una riga.';return;}
+  $('newErr').textContent='';S.diary.unshift({id:Date.now(),date:new Date().toISOString(),text:t});$('txt').value='';save();draw();render();};
+function render(){const box=$('entries');box.innerHTML='';
+  S.diary.forEach(e=>{const s=document.createElement('section');s.className='entry';
+    const w=document.createElement('div');w.className='when';w.textContent=new Date(e.date).toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long'});
+    const t=document.createElement('div');t.className='txt';t.textContent=e.text;const x=document.createElement('button');x.className='del';x.textContent='Elimina';
+    x.onclick=()=>{if(!x.dataset.ok){x.dataset.ok=1;x.textContent='Tocca di nuovo per eliminare';setTimeout(()=>{delete x.dataset.ok;x.textContent='Elimina';},4000);return;}S.diary=S.diary.filter(y=>y.id!==e.id);save();draw();render();};
+    s.append(w,t,x);box.appendChild(s);});}
+$('exp').onclick=()=>{const t=JSON.stringify(S);const box=$('bkBox'),ta=$('bkTxt');
+  const show=()=>{box.hidden=false;$('impGo').hidden=true;ta.value=t;ta.focus();ta.select();$('bkMsg').textContent='Seleziona il testo qui sotto, copialo e incollalo in una nota.';};
+  try{navigator.clipboard.writeText(t).then(()=>{box.hidden=true;$('bkMsg').textContent='Dati copiati. Incollali in una nota e conservala.';},show);}catch(e){show();}};
+$('impOpen').onclick=()=>{$('bkBox').hidden=false;$('bkTxt').value='';$('impGo').hidden=false;$('bkMsg').textContent='Incolla la copia e premi il pulsante: i dati attuali di questo telefono verranno sostituiti.';$('bkTxt').focus();};
+$('impGo').onclick=()=>{try{const d=JSON.parse($('bkTxt').value.trim());if(!d||!Array.isArray(d.diary)||typeof d.days!=='object')throw 0;
+  S=Object.assign({goal:'',habits:['','',''],days:{},diary:[]},d);save();showToday();draw();render();$('bkBox').hidden=true;$('bkMsg').textContent='Copia ricaricata.';}
+  catch(x){$('bkMsg').textContent='Questo testo non è una copia di Passo dopo passo. Controlla di averlo incollato tutto.';}};
+
+refreshOwn();showToday();draw();render();
+</script>
+
+</body>
+</html>
