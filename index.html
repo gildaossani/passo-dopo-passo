@@ -73,6 +73,9 @@ textarea{resize:vertical}
 .own .chip{margin-top:8px}
 .del{font:inherit;font-size:13px;color:var(--mute);background:none;border:0;padding:8px 0 0;cursor:pointer;text-decoration:underline}
 .note{font-size:13px;color:#CBCDF6;margin:8px 0 0}
+.a2hs{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--c3);border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:14px;line-height:1.45}
+.a2hs b{display:block;margin-bottom:2px}
+.a2hs button{font:inherit;font-size:13px;color:var(--mute);background:none;border:0;padding:0;margin-top:6px;text-decoration:underline;cursor:pointer}
 #txtBox{margin-top:10px;padding:12px;background:rgba(255,255,255,.1);border-radius:10px;white-space:pre-wrap;line-height:1.5}
 @media (prefers-reduced-motion:reduce){.orb{transition:none}}
 </style>
@@ -81,6 +84,7 @@ textarea{resize:vertical}
 <main>
 <header><div class="date" id="oggi"></div><h1>Passo dopo passo</h1></header>
 
+<div class="a2hs" id="a2hs" hidden><div><b>Mettila nella schermata Home</b>Così non perdi i tuoi dati: iPhone li cancella se la pagina resta aperta solo in Safari e non la usi per una settimana. Tocca il tasto Condividi in basso, poi “Aggiungi alla schermata Home”.<br><button id="a2hsX" type="button">Ho capito</button></div></div>
 <div class="tab on" id="t-oggi">
   <section id="setup" hidden>
     <h2>Il tuo obiettivo</h2>
@@ -346,6 +350,11 @@ $('impGo').onclick=()=>{try{const d=JSON.parse($('bkTxt').value.trim());if(!d||!
   S=Object.assign({goal:'',habits:['','',''],days:{},diary:[]},d);save();showToday();draw();render();$('bkBox').hidden=true;$('bkMsg').textContent='Copia ricaricata.';}
   catch(x){$('bkMsg').textContent='Questo testo non è una copia di Passo dopo passo. Controlla di averlo incollato tutto.';}};
 
+try{const ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const home=window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+  let seen=false;try{seen=localStorage.getItem('pdp-a2hs')==='1';}catch(e){}
+  if(ios&&!home&&!seen)$('a2hs').hidden=false;}catch(e){}
+$('a2hsX').onclick=()=>{$('a2hs').hidden=true;try{localStorage.setItem('pdp-a2hs','1');}catch(e){}};
 refreshOwn();showToday();draw();render();
 </script>
 
